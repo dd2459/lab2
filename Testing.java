@@ -14,9 +14,9 @@ public class Testing {
   public static String PAIRWISE_FILE_IN = "./pairwise.in";
   public static String PAIRWISE_FILE_OUT = "./pairwise.out";
 
-  public static int MAX_VALUE = 20;
-  public static int N = 20;
-  public static int TC = 230;
+  public static int MAX_VALUE = 50;
+  public static int N = 75;
+  public static int TC = 3000;
   public static int[] TYPICAL_ARRAY = {1,-1}; //k=2, default value is the first one
   public static int[] TYPICAL_KEY = {2,0};
 
@@ -46,6 +46,7 @@ public class Testing {
       out += Functions.membershipUnsorted(e.getValue(), e.getKey()) +"\n";
     }
     writeToFile(RANDOM_FILE_OUT, out);
+    System.out.println(runOracles(RANDOM_FILE_OUT, RANDOM_FILE_IN));
   }
 
   public static void runPairwise() {
@@ -54,6 +55,7 @@ public class Testing {
       out += Functions.membershipUnsorted(e.getValue(), e.getKey()) +"\n";
     }
     writeToFile(PAIRWISE_FILE_OUT, out);
+    System.out.println(runOracles(PAIRWISE_FILE_OUT, PAIRWISE_FILE_IN));
   }
   
   public static void printRandomTestCase() {
@@ -131,8 +133,29 @@ public class Testing {
     testsCases += wise2; 
 
     writeToFile(PAIRWISE_FILE_IN,testsCases);
-    System.out.println("wip");
   }
+
+  public static boolean oracle(int[] A, int key, int result) {
+    int expected = 0;
+    for(int i = 0; i < A.length; i++){
+      if(A[i] == key) {
+        expected = 1;
+        break;
+      }
+    }
+    return (expected == result);
+  }
+
+  public static List<Boolean> runOracles(String pathResult, String pathTC) {
+    List<Boolean> ret = new LinkedList<Boolean>();
+    for(Entry<Integer, int[]> e : readFromFile(pathTC)){
+      int result = Functions.membershipUnsorted(e.getValue(), e.getKey());
+      ret.add(oracle(e.getValue(), e.getKey(), result));
+    }
+    return ret;
+  }
+    
+
 
   public static List<Entry<Integer, int[]>> readFromFile(String path) {
     List<Entry<Integer,int[]>> ret = new LinkedList<Entry<Integer, int[]>>();
